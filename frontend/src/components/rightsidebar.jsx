@@ -22,7 +22,6 @@ const Rightsidebar = () => {
   React.useEffect(() => {
     getAllPost();
   }, []);
-  console.log("suggestedUser", suggestedUser);
 
   return (
     <div className="">

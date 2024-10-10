@@ -66,11 +66,11 @@ const Explore = () => {
                         </div>
                       </div>
                     ) : (
-                      <div className="h-[250px]">
+                      <div className="h-[350px] overflow-hidden">
                         <img
                           src={image.urls.small}
                           alt={image.alt_description}
-                          className="w-full h-full object-cover rounded-md"
+                          className="w-full h-full object-cover rounded-sm cursor-pointer hover:scale-150 duration-700 transition-all"
                         />
                       </div>
                     )}

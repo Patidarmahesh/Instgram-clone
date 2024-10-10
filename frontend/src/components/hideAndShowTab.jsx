@@ -64,13 +64,13 @@ const HideAndShowTab = ({ keyword, setKeyword, showLeftTab }) => {
                       src={
                         profilePicture
                           ? profilePicture
-                          : "https://scontent.fidr4-2.fna.fbcdn.net/v/t1.30497-1/115870214_694925034696967_1870022665148339563_n.jpg?stp=dst-jpg_s100x100&_nc_cat=1&ccb=1-7&_nc_sid=7565cd&_nc_ohc=oN3WJRrI1j4Q7kNvgHH5ota&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.fidr4-2.fna&_nc_gid=AoSHG9fW9jsVsxQv5JHallV&oh=00_AYA_r-ZR-HdYd032-AfO7Nrd-v3FwatCvubRxj3E_8qfUw&oe=66F70922"
+                          : "https://www.ihna.edu.au/blog/wp-content/uploads/2022/10/user-dummy-800x789.png"
                       }
                     />
                     <div>
                       <h1 className="text-xl font-semibold">{userName}</h1>
                       <h4 className="text-[18px] text-gray-500 flex gap-2">
-                        {bio ? bio : "i love my"}
+                        {bio ? bio.substring(0,20) : "nothing bio"}
                         <h1 className="text-xl font-semibold">Following</h1>
                       </h4>
                     </div>

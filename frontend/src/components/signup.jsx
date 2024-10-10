@@ -5,6 +5,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";
 import InputAdornment from "@mui/material/InputAdornment";
+import CircularProgress from "@mui/material/CircularProgress";
 import FormControl from "@mui/material/FormControl";
 import IconButton from "@mui/material/IconButton";
 import { Link, useNavigation } from "react-router-dom";
@@ -16,6 +17,7 @@ import axios from "axios";
 
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigation();
   const {
     register,
@@ -26,6 +28,7 @@ const Signup = () => {
 
   const signupHandler = async (values) => {
     try {
+      setLoading(true);
       const response = await axios.post(
         "http://localhost:8000/api/v1/user/register",
         values,
@@ -44,6 +47,8 @@ const Signup = () => {
     } catch (error) {
       console.log(error);
       toast(error?.response?.data?.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -140,12 +145,23 @@ const Signup = () => {
             {errors?.password?.message}
           </span>
         )}
-        <button
-          type="submit"
-          className="bg-slate-800 text-white p-3 rounded-md"
-        >
-          Signup
-        </button>
+        {loading ? (
+          <button
+            type="submit"
+            className="bg-slate-800 flex justify-center items-center text-white p-3 rounded-md"
+          >
+            <CircularProgress className="p-2 animate-spin" />
+            Please wait
+          </button>
+        ) : (
+          <button
+            type="submit"
+            className="bg-slate-800 text-white p-3 rounded-md"
+          >
+            Signup
+          </button>
+        )}
+
         <span className="text-center text-md text-slate-400">
           Already have an account?{" "}
           <Link className="text-blue-600" to="/login">

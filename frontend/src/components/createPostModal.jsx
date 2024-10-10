@@ -1,12 +1,8 @@
 import React, { useRef } from "react";
-import IconButton from "@mui/joy/IconButton";
-import Textarea from "@mui/joy/Textarea";
-import Typography from "@mui/joy/Typography";
 import Modal from "@mui/material/Modal";
-import Button from "@mui/joy/Button";
-import Box from "@mui/joy/Box";
 import { readFileAsDataUri } from "@/helper/utils";
 import axios from "axios";
+import CircularProgress from "@mui/material/CircularProgress";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { setPost } from "@/redux/postSlice";
@@ -15,11 +11,11 @@ import { GetRequest } from "@/apiHandler/apiHandler";
 const CreatePostModal = ({ open, handleClose }) => {
   const imageRef = useRef();
   const [file, setFile] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
   const [selectedImagePrev, setSelectedImagePrev] = React.useState("");
   const [nextButton, setNextButton] = React.useState(false);
   const [caption, setCaption] = React.useState("");
   const dispatch = useDispatch();
-  const addEmoji = (emoji) => () => setCaption(`${text}${emoji}`);
 
   const fileChangeHandler = async (e) => {
     const file = e.target.files?.[0];
@@ -42,12 +38,13 @@ const CreatePostModal = ({ open, handleClose }) => {
   };
 
   const postHandler = async () => {
+    setLoading(true);
+    const formData = new FormData();
+    formData.append("caption", caption);
+    if (selectedImagePrev) {
+      formData.append("image", file);
+    }
     try {
-      const formData = new FormData();
-      formData.append("caption", caption);
-      if (selectedImagePrev) {
-        formData.append("image", file);
-      }
       const response = await axios.post(
         "http://localhost:8000/api/v1/post/createpost",
         formData,
@@ -60,7 +57,7 @@ const CreatePostModal = ({ open, handleClose }) => {
       );
       if (response?.data?.success) {
         toast(response?.data?.message);
-        getAllPost()
+        getAllPost();
         setFile("");
         setNextButton("");
         setSelectedImagePrev("");
@@ -70,6 +67,8 @@ const CreatePostModal = ({ open, handleClose }) => {
     } catch (error) {
       console.log(error);
       toast.error(error?.response?.data?.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -113,57 +112,25 @@ const CreatePostModal = ({ open, handleClose }) => {
             nextButton ? (
               <div className="flex flex-col gap-2">
                 <div className="h-24 w-full border-slate-400 border-b"></div>
-                <Textarea
+                <textarea
+                  className="outline-none p-3 text-xl placeholder:font-bold placeholder:text-green-700 bg-transparent h-[260px]"
                   placeholder={`Share youre thought ${"mayank"} .......`}
                   value={caption}
                   onChange={(event) => setCaption(event.target.value)}
-                  minRows={8}
-                  maxRows={8}
-                  startDecorator={
-                    <Box sx={{ display: "flex", gap: 0.5, flex: 1 }}>
-                      <IconButton
-                        variant="outlined"
-                        color="neutral"
-                        onClick={addEmoji("👍")}
-                      >
-                        👍
-                      </IconButton>
-                      <IconButton
-                        variant="outlined"
-                        color="neutral"
-                        onClick={addEmoji("🏖")}
-                      >
-                        🏖
-                      </IconButton>
-                      <IconButton
-                        variant="outlined"
-                        color="neutral"
-                        onClick={addEmoji("😍")}
-                      >
-                        😍
-                      </IconButton>
-                      <Button
-                        variant="outlined"
-                        color="neutral"
-                        sx={{ ml: "auto" }}
-                      >
-                        See all
-                      </Button>
-                    </Box>
-                  }
-                  endDecorator={
-                    <Typography level="body-xs" sx={{ ml: "auto" }}>
-                      {caption.length} character(s)
-                    </Typography>
-                  }
-                  sx={{ minWidth: 300 }}
                 />
-                <button
-                  onClick={postHandler}
-                  className="bg-blue-300 p-4 w-[98%] mx-2 hover:bg-blue-800 duration-200 text-xl text-center rounded-md"
-                >
-                  Create Post
-                </button>
+                {loading ? (
+                  <button className="bg-black p-4 w-[98%] mx-2 flex justify-center items-center rounded-md text-xl">
+                    <CircularProgress className="p-2 animate-spin" />
+                    Please wait
+                  </button>
+                ) : (
+                  <button
+                    onClick={postHandler}
+                    className="bg-blue-300 p-4 w-[98%] mx-2 hover:bg-blue-800 duration-200 text-xl text-center "
+                  >
+                    Create Post
+                  </button>
+                )}
               </div>
             ) : (
               <img

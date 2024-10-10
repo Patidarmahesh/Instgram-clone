@@ -35,10 +35,12 @@ import { updateRequestById } from "@/apiHandler/apiHandler";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { setAuthUser } from "@/redux/authSlice";
+import { useNavigate } from "react-router-dom";
 
 const EditProfile = () => {
   const [showPassword, setShowPassword] = React.useState(false);
   const [file, setFile] = React.useState("");
+  const navigate = useNavigate()
   const dispatch = useDispatch();
   const imageRef = useRef();
   const { user } = useSelector((state) => state.auth);
@@ -194,6 +196,11 @@ const EditProfile = () => {
     }
   };
 
+  // const setDefaultHandler = () =>{
+  //   setValue("bio",user?.bio)
+  //   setValue("profilePicture",user?.profilePicture)
+  // }
+
   const editFormHandler = async (form) => {
     const formData = new FormData();
     const { currentpassword, confirmPassword, gender, bio } = form;
@@ -201,7 +208,7 @@ const EditProfile = () => {
     if (confirmPassword) formData.append("confirmPassword", confirmPassword);
     if (gender) formData.append("gender", gender);
     if (bio) formData.append("bio", bio);
-    if (file) formData.append("image", file);
+    if (file) formData.append("profilePicture", file);
     const response = await updateRequestById(
       `/api/v1/user/profile/edit`,
       formData,
@@ -221,6 +228,7 @@ const EditProfile = () => {
       dispatch(setAuthUser(user));
       setFile("");
       reset();
+      // setDefaultHandler()
     }
   };
 
@@ -256,11 +264,11 @@ const EditProfile = () => {
         <div className="bg-[rgba(181,178,178,0.2)] shadow-lg h-32 flex items-center gap-8 px-8 rounded-md">
           <img
             className="h-24 w-24 rounded-full object-cover cursor-pointer"
-            src="https://image.tmdb.org/t/p/original/ddFCnCN8sTaF9xgEXKkxiaM9tCd.jpg"
+            src={user?.profilePicture?user?.profilePicture:"https://www.ihna.edu.au/blog/wp-content/uploads/2022/10/user-dummy-800x789.png"}
           />
           <div>
             <h1 className="text-xl text-white font-semibold">
-              mahesh._.patidar_.mp_
+              {user?.userName}
             </h1>
             <h4 className="text-xl text-gray-400">ραтι∂αя мαнєѕн</h4>
           </div>
@@ -298,7 +306,7 @@ const EditProfile = () => {
             rows={4}
             name="bio"
             {...register("bio")}
-            defaultValue="__## 5️⃣th OF JULY ##LOVE TO MAKE FRIENDS✌@VIRAT.KOHLI Indore ❤ Archery____🏹 Mern Stack Developer______💻"
+            defaultValue={user?.bio}
           />
         </div>
         <h1 className="text-2xl font-bold text-white">Gender</h1>

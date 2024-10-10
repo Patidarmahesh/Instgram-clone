@@ -28,12 +28,12 @@ export const createPost = async (req, res) => {
     const fileUri = `data:image/jpeg;base64,${imageBufferValue.toString(
       "base64"
     )}`;
-    // const cloudResponse = await cloudinary.uploader.upload(fileUri);
+    
+    const cloudResponse = await cloudinary.uploader.upload(fileUri);
     const post = await Post.create({
       caption,
       // image: "https://i.ebayimg.com/images/g/Au0AAOSwg2ZjVLgr/s-l1200.jpg",
-      image:
-        "https://i.pinimg.com/originals/2f/b2/60/2fb26065a09a1ec1b8ed957c1e281fdc.jpg",
+      image: cloudResponse.secure_url,
       author: authorId,
     });
     const user = await User.findById(authorId);

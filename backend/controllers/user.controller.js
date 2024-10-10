@@ -17,7 +17,7 @@ export const register = async (req, res) => {
         success: false,
       });
     }
-    const user = await User.findOne({ email }).populate({});
+    const user = await User.findOne({ email })
 
     if (user) {
       return res.status(401).json({
@@ -97,8 +97,7 @@ export const login = async (req, res) => {
       .cookie("token", token, {
         httpOnly: true,
         sameSite: "strict",
-        // maxAge: 1 * 24 * 60 * 60 * 1000,
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+        maxAge: 1 * 24 * 60 * 60 * 1000,
       })
       .json({
         message: `Welcome back ${user.userName}`,
@@ -200,10 +199,7 @@ export const editProfile = async (req, res) => {
         user.password = hashedPassword;
       }
     }
-    if (profilePicture)
-      user.profilePicture =
-        "https://i.pinimg.com/originals/2f/b2/60/2fb26065a09a1ec1b8ed957c1e281fdc.jpg";
-    // if (profilePicture) user.profilePicture = cloudResponse.secure_url;
+    if (profilePicture) user.profilePicture = cloudResponse?.secure_url;
 
     await user.save();
 

@@ -5,6 +5,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";
 import InputAdornment from "@mui/material/InputAdornment";
+import CircularProgress from "@mui/material/CircularProgress";
 import FormControl from "@mui/material/FormControl";
 import IconButton from "@mui/material/IconButton";
 import { Link, useNavigate } from "react-router-dom";
@@ -18,6 +19,7 @@ import { setAuthUser } from "@/redux/authSlice";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -30,6 +32,7 @@ const Login = () => {
 
   const signupHandler = async (values) => {
     try {
+      setLoading(true);
       const response = await axios.post(
         "http://localhost:8000/api/v1/user/login",
         values,
@@ -49,6 +52,8 @@ const Login = () => {
     } catch (error) {
       console.log(error);
       toast.error(error.response.data.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -138,12 +143,23 @@ const Login = () => {
             {errors?.password?.message}
           </span>
         )}
-        <button
-          type="submit"
-          className="bg-slate-800 text-white p-3 rounded-md"
-        >
-          login
-        </button>
+
+        {loading ? (
+          <button
+            type="submit"
+            className="bg-slate-800 flex justify-center items-center text-white p-3 rounded-md"
+          >
+            <CircularProgress className="p-2 animate-spin" />
+            Please wait
+          </button>
+        ) : (
+          <button
+            type="submit"
+            className="bg-slate-800 text-white p-3 rounded-md"
+          >
+            login
+          </button>
+        )}
         <span className="text-center text-md text-slate-400">
           Dosent have an account?{" "}
           <Link className="text-blue-600" to="/signup">

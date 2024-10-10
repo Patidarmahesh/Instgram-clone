@@ -1,13 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import Modal from "@mui/material/Modal";
-import { FaHeart, FaRegHeart } from "react-icons/fa";
-import { FaRegCommentDots } from "react-icons/fa6";
-import { TbLocationShare } from "react-icons/tb";
-import { FaRegBookmark } from "react-icons/fa";
-import { Avatar } from "@mui/material";
-import { CiHeart } from "react-icons/ci";
-import { IoEllipsisHorizontalSharp } from "react-icons/io5";
-import dayjs from "dayjs";
 import {
   deleteRequestById,
   GetRequest,
@@ -17,7 +9,7 @@ import {
 import { toast } from "react-toastify";
 import { setPost } from "@/redux/postSlice";
 import { useDispatch, useSelector } from "react-redux";
-import Action from "./Action";
+import CommentCommanData from "./CommentCommanData";
 
 const CommentModal = ({
   item,
@@ -106,7 +98,7 @@ const CommentModal = ({
       const { success: successData, posts } = allPost?.data;
       if (successData) {
         dispatch(setPost(posts));
-        onClickFocus()
+        onClickFocus();
       }
     }
   };
@@ -125,10 +117,10 @@ const CommentModal = ({
       onClose={handleClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
-      className="flex justify-center items-center border-0"
+      className="flex justify-center items-center border-0 outline-none"
     >
-      <div className="md:w-[1100px] p-4 md:p-0 ">
-        <div className="flex">
+      <div className="md:w-[1100px] p-4 md:p-0">
+        <div className="flex h-[680px] shadow-2xl shadow-green-700">
           <div className="w-[40%]">
             <img
               className="w-full object-cover h-full rounded-l-md"
@@ -136,7 +128,7 @@ const CommentModal = ({
               // src="https://static-eu-cdn.eporner.com/gallery/bf/W9/6n1SyREW9bf/14778251-ava-addams-rent-a-pornstar-the-lonely-bachelor-007-bdfc2919f798204d2c2002010d1a9e05_880x660.jpg"
             />
           </div>
-          <div className="w-[60%] bg-black rounded-r-md flex flex-col justify-between">
+          {/* <div className="w-[60%] bg-black rounded-r-md flex flex-col justify-between">
             <div className=" w-full h-[16%] flex items-center justify-between px-3">
               <div className="flex items-center gap-3">
                 <Avatar
@@ -187,7 +179,7 @@ const CommentModal = ({
                         contentEditable={toogleButton}
                         suppressContentEditableWarning={toogleButton}
                         ref={inputRef}
-                        style={{ wordWrap: "break-word"}}
+                        style={{ wordWrap: "break-word" }}
                         className="w-[35%] p-2 focus:outline-none focus:ring-2 rounded-sm focus:ring-violet-300"
                       >
                         {text}
@@ -215,7 +207,7 @@ const CommentModal = ({
                                   <Action
                                     className="bg-black cursor-pointer text-center hover:bg-opacity-30 transition-opacity duration-200 w-28 p-1 rounded-md text-white"
                                     type="Save"
-                                    handleClick={()=>updateComment(_id)}
+                                    handleClick={() => updateComment(_id)}
                                   />
                                   <Action
                                     className="bg-green-500 cursor-pointer text-center hover:bg-opacity-30 transition-opacity duration-200 w-28 p-1 rounded-md text-white"
@@ -296,7 +288,28 @@ const CommentModal = ({
                 )}
               </div>
             </div>
-          </div>
+          </div> */}
+          <CommentCommanData
+            likeDislikeHandler={likeDislikeHandler}
+            like={like}
+            handleShareOpen={handleShareOpen}
+            userName={userName}
+            likes={likes}
+            comments={comments}
+            caption={caption}
+            createdAt={createdAt}
+            profilePicture={profilePicture}
+            _id={_id}
+            text={text}
+            user={user}
+            changeTextHandler={changeTextHandler}
+            updateComment={updateComment}
+            inputRef={inputRef}
+            addComment={addComment}
+            deleteComment={deleteComment}
+            toogleButton={toogleButton}
+            onClickFocus={onClickFocus}
+          />
         </div>
       </div>
     </Modal>
