@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { GetRequest, postRequest } from "@/apiHandler/apiHandler";
-import { setAuthUser } from "@/redux/authSlice";
+import { setAuthUser, setIndexCount } from "@/redux/authSlice";
 import CarousalModal from "./CarousalModal";
 
 const Taps = ({ handleOpen, activeTab, handleTabChangeler, data }) => {
@@ -48,7 +48,7 @@ const Taps = ({ handleOpen, activeTab, handleTabChangeler, data }) => {
       </div>
       <div className="grid grid-cols-3 gap-2 mt-3">
         {activeTab === "posts" &&
-          data?.posts.map((item,index) => {
+          data?.posts.map((item, index) => {
             return (
               <div key={item._id} className="group relative cursor-pointer">
                 <img
@@ -113,16 +113,25 @@ const UserProfile = () => {
   const [data, setData] = React.useState([]);
   const [carousalData, setCarousalData] = React.useState([]);
   const [open, setOpen] = React.useState(false);
-  const { user } = useSelector((state) => state.auth);
+  const { user, indexCountValue } = useSelector((state) => state.auth);
   const loogedinUser = user._id === data._id;
   const followCheck = user?.following?.includes(data?._id) || false;
   const { _id: id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleOpen = (index) => {
-    let dataChangeValue = data;
-    const sliceResult = dataChangeValue.posts.slice(index);
+  const handleOpen = async (indexCount) => {
+    indexCount && dispatch(setIndexCount(indexCount));
+    const response = await GetRequest(`/api/v1/user/${id}/profile`, {
+      withCredentials: true,
+    });
+    if (response?.data.success) {
+      setData(response?.data?.user);
+    }
+    let dataChangeValue = response?.data?.user;
+    const sliceResult = dataChangeValue?.posts?.slice(
+      indexCount || indexCountValue
+    );
     setCarousalData(sliceResult);
     setOpen(true);
   };
@@ -189,6 +198,7 @@ const UserProfile = () => {
       <CarousalModal
         carousalData={carousalData}
         open={open}
+        handleOpen={handleOpen}
         handleClose={handleClose}
       />
       <div className={`md:max-w-[84%] w-full md:ml-[16%] md:p-10 bg-black`}>

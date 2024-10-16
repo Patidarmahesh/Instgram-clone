@@ -1,8 +1,8 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import cookie from "cookie-parser";
+import sharp from "sharp";
 import { User } from "../models/userModel.js";
-import getDataUri from "../utils/datauri.js";
 import cloudinary from "../utils/cloudinary.js";
 import { Post } from "../models/postModel.js";
 
@@ -17,7 +17,7 @@ export const register = async (req, res) => {
         success: false,
       });
     }
-    const user = await User.findOne({ email })
+    const user = await User.findOne({ email });
 
     if (user) {
       return res.status(401).json({
@@ -63,9 +63,11 @@ export const login = async (req, res) => {
         success: false,
       });
     }
+
     const token = await jwt.sign({ userId: user._id }, process.env.SECRET_KEY, {
       expiresIn: "1d",
     });
+
     const poplatePost = await Promise.all(
       user.posts.map(async (postId) => {
         const post = await Post.findById(postId);
@@ -127,7 +129,19 @@ export const getProfile = async (req, res) => {
     if (user) {
       const poplatePost = await Promise.all(
         user.posts.map(async (postId) => {
-          const post = await Post.findById(postId);
+          const post = await Post.findById(postId)
+            .populate({
+              path: "author",
+              select: "userName profilePicture",
+            })
+            .populate({
+              path: "comments",
+              sort: { createdAt: -1 },
+              populate: {
+                path: "author",
+                select: "userName profilePicture",
+              },
+            });
           if (post?.author?.equals(user._id)) {
             return post;
           }
@@ -166,11 +180,19 @@ export const editProfile = async (req, res) => {
     const userId = req.id;
     const { bio, gender, currentpassword, confirmPassword } = req.body;
     const profilePicture = req.file;
-
     let cloudResponse;
     if (profilePicture) {
-      const fileUri = getDataUri(profilePicture);
+      // image upload
+      const imageBufferValue = await sharp(profilePicture.buffer)
+        .resize({ width: 800, height: 800, fit: "inside" })
+        .toFormat("jpeg", { quality: 80 })
+        .toBuffer();
+      //buffer convert data uri
+      const fileUri = `data:image/jpeg;base64,${imageBufferValue.toString(
+        "base64"
+      )}`;
       cloudResponse = await cloudinary.uploader.upload(fileUri);
+      console.log("cloudResponse", cloudResponse);
     }
 
     const user = await User.findById(userId);

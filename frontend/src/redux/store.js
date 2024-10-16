@@ -8,12 +8,12 @@ import {
   PURGE,
   REGISTER,
 } from "redux-persist";
+import { composeWithDevTools } from "@redux-devtools/extension";
 import storage from "redux-persist/lib/storage";
 import authSlice from "./authSlice";
 import darkAndWhiteSlice from "./darkAndWhiteSlice";
 import postSlice from "./postSlice";
 import bookMarkSlice from "./bookMarkSlice";
-import { composeWithDevTools } from "@redux-devtools/extension";
 import socketSlice from "./socketSlice";
 import chatSlice from "./chatSlice";
 import notificationSlice from "./notificationSlice";

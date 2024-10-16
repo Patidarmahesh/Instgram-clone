@@ -5,6 +5,7 @@ const authSlice = createSlice({
   initialState: {
     user: null,
     selectedUser: [],
+    indexCountValue: 0,
   },
   reducers: {
     setAuthUser: (state, action) => {
@@ -13,7 +14,12 @@ const authSlice = createSlice({
     setSelectedUser: (state, action) => {
       state.selectedUser = action.payload;
     },
+    setIndexCount: (state, action) => {
+      state.indexCountValue = action.payload;
+    },
   },
 });
-export const { setAuthUser, setSelectedUser } = authSlice.actions;
+
+export const { setAuthUser, setSelectedUser, setIndexCount } =
+  authSlice.actions;
 export default authSlice.reducer;

@@ -13,6 +13,7 @@ const HideAndShowTab = ({ keyword, setKeyword, showLeftTab }) => {
   const dispatch = useDispatch();
   const { searchData } = useSelector((state) => state.bookMarkPost);
   const { likeNotification } = useSelector((state) => state.appNotification);
+
   const fetchUser = async (e) => {
     e.preventDefault();
     const response = await GetRequest(`/api/v1/user/search/${keyword}`, {
@@ -84,8 +85,6 @@ const HideAndShowTab = ({ keyword, setKeyword, showLeftTab }) => {
                 );
               })}
           </div>
-
-          {/* <div className="w-full border-t border-gray-600"></div> */}
         </>
       )}
       {showLeftTab === "Notifications" && (

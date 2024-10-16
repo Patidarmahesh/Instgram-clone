@@ -1,11 +1,27 @@
 import React, { useState } from "react";
 import ItemsCarousel from "react-items-carousel";
+import { useSelector } from "react-redux";
+import CommentCommanData from "./CommentCommanData";
+import ShareModal from "./ShareModal";
 
-const Carousal = ({ carousalData, handleClose }) => {
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  p: 4,
+  backgroundColor: "gray",
+};
+
+const Carousal = ({ carousalData,handleOpen,handleClose }) => {
   const [activeItemIndex, setActiveItemIndex] = useState(0);
   // const filteredData = carousalData.flat() || []
   const chevronWidth = 10;
-  
+  const [shareOpen, setShareOpen] = React.useState(false);
+  const handleShareOpen = () => setShareOpen(true);
+  const handleShareClose = () => setShareOpen(false);
+
   return (
     <div className="p-10 z-20 h-screen">
       <ItemsCarousel
@@ -33,22 +49,31 @@ const Carousal = ({ carousalData, handleClose }) => {
                 key={item?._id}
                 className="w-full flex h-full justify-center"
               >
-                <div className="w-[70%] h-[700px] shadow-2xl shadow-green-700 grid grid-cols-[40%_80%] overflow-hidden">
+                <div className="w-[70%] h-[700px] shadow-2xl shadow-green-700 grid grid-cols-[40%_60%]">
                   <img
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-fill"
                     src={item?.image}
                   />
 
-                  <div className="bg-gradient-to-br w-full to-gray-800 via-black from-gray-500">
-                    <div className=" bg-red-500 h-[15%]"></div>
-                    <div className="bg-green-500 h-[70%]"></div>
-                    <div className="bg-red-500 h-[15%]"></div>
-                  </div>
+                  {/* <div className="bg-gradient-to-br w-full to-gray-800 via-black from-gray-500"> */}
+                  <CommentCommanData
+                    className="h-[700px] w-full"
+                    item={item}
+                    handleOpen={handleOpen}
+                    handleClose={handleClose}
+                    handleShareOpen={handleShareOpen}
+                  />
+                  {/* </div> */}
                 </div>
               </div>
             );
           })}
       </ItemsCarousel>
+      <ShareModal
+        style={style}
+        shareOpen={shareOpen}
+        handleShareClose={handleShareClose}
+      />
     </div>
   );
 };

@@ -57,7 +57,7 @@ const Mainlayout = () => {
       icon: (
         <Avatar
           alt="Travis Howard"
-          src="https://tse1.mm.bing.net/th?id=OIP.boU1BWqg7BrJ7TiacMTcUQHaJ4&pid=Api&P=0&h=220"
+          src={user?.profilePicture?user?.profilePicture:"https://www.ihna.edu.au/blog/wp-content/uploads/2022/10/user-dummy-800x789.png"}
         />
       ),
       name: "Profile",

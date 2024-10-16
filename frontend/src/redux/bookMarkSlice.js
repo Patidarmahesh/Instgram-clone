@@ -12,7 +12,7 @@ const bookmarkSlice = createSlice({
       state.bookmark = action.payload;
     },
     setSaved: (state, action) => {
-      state.saved = action.payload;
+      state.saved = action.payload
     },
     setSearchData: (state, action) => {
       state.searchData.push(action.payload) 

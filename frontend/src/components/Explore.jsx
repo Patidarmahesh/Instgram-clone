@@ -37,8 +37,12 @@ const Explore = () => {
     };
   }, []);
   return (
-    <div className={`ml-[15%] w-[85%] bg-black px-12 pt-12 ${!explore.length>0&&"h-screen flex justify-center items-center"}`}>
-      {explore.length>0 ? (
+    <div
+      className={`ml-[15%] w-[85%] bg-black px-12 pt-12 ${
+        !explore.length > 0 && "h-screen flex justify-center items-center"
+      }`}
+    >
+      {explore.length > 0 ? (
         <InfiniteScroll
           dataLength={explore?.length}
           next={fetchExploreResult}
@@ -52,7 +56,11 @@ const Explore = () => {
                 return (
                   <>
                     {loading ? (
-                      <div role="status" class="animate-pulse h-[250px]">
+                      <div
+                        key={index}
+                        role="status"
+                        class="animate-pulse h-[250px]"
+                      >
                         <div class="flex items-center justify-center w-full h-full bg-gray-300 rounded dark:bg-gray-700">
                           <svg
                             class="w-10 h-10 text-gray-200 dark:text-gray-600"
@@ -66,7 +74,7 @@ const Explore = () => {
                         </div>
                       </div>
                     ) : (
-                      <div className="h-[350px] overflow-hidden">
+                      <div key={index} className="h-[350px] overflow-hidden">
                         <img
                           src={image.urls.small}
                           alt={image.alt_description}
@@ -80,7 +88,9 @@ const Explore = () => {
           </div>
         </InfiniteScroll>
       ) : (
-        <h1 className="text-2xl font-bold text-white">Please check youre internet</h1>
+        <h1 className="text-2xl font-bold text-white">
+          Please check youre internet
+        </h1>
       )}
     </div>
   );

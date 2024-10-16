@@ -6,9 +6,11 @@ import { IoEllipsisHorizontalSharp } from "react-icons/io5";
 import { FaRegHeart } from "react-icons/fa";
 import { FaRegCommentDots } from "react-icons/fa6";
 import { IoMdBookmark } from "react-icons/io";
-import { TbLocationShare } from "react-icons/tb";
 import { FaRegBookmark } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
+import { FaRegShareSquare } from "react-icons/fa";
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -34,6 +36,24 @@ const style = {
   backgroundColor: "gray",
 };
 
+const responsive = {
+  desktop: {
+    breakpoint: { max: 3000, min: 1024 },
+    items: 1,
+    slidesToSlide: 1, // optional, default to 1.
+  },
+  tablet: {
+    breakpoint: { max: 1024, min: 464 },
+    items: 1,
+    slidesToSlide: 1, // optional, default to 1.
+  },
+  mobile: {
+    breakpoint: { max: 464, min: 0 },
+    items: 1,
+    slidesToSlide: 1, // optional, default to 1.
+  },
+};
+
 const Post = ({ setIsHovered, isHovered, item }) => {
   const [open, setOpen] = React.useState(false);
   const [shareOpen, setShareOpen] = React.useState(false);
@@ -47,10 +67,13 @@ const Post = ({ setIsHovered, isHovered, item }) => {
   const [like, disLike] = React.useState(
     item?.likes?.includes(user?._id) || false
   );
+  const isBookmarked = user?.bookMarks.some(
+    (bookmark) => bookmark._id === item._id
+  );
+  console.log("isBookmarked", isBookmarked);
   const [followAndUnFollow, setFollowAndUnFollow] = React.useState(
     user?.following?.includes(_id) || false
   );
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleOpen = () => setOpen(true);
@@ -184,6 +207,14 @@ const Post = ({ setIsHovered, isHovered, item }) => {
     if (success) {
       toast.success(message);
       dispatch(setSaved(type));
+      let id = _id;
+      const userData = await GetRequest(`/api/v1/user/${id}/profile`, {
+        withCredentials: true,
+      });
+      const { success: successData, user } = userData?.data;
+      if (successData) {
+        dispatch(setAuthUser(user));
+      }
     }
   };
 
@@ -299,7 +330,9 @@ const Post = ({ setIsHovered, isHovered, item }) => {
   );
 
   return (
-    <div className={"w-full mb-4 md:max-w-xl mx-auto border-b border-gray-300"}>
+    <div
+      className={"w-full mb-4 md:max-w-xl mx-auto border-b border-[#212121]"}
+    >
       {hoverCard}
       <div className="flex items-center justify-between px-4 md:px-0">
         <div className="flex items-center gap-4 mb-3">
@@ -331,7 +364,10 @@ const Post = ({ setIsHovered, isHovered, item }) => {
             {formattedDate}
           </span>
           {user?._id === _id && (
-            <button className="md:w-36 bg-gray-600 hover:bg-gray-800 text-white hover:text-white duration-300 font-medium text-xl rounded-md p-1">
+            <button
+              // onClick={() => dispatch(setSaved(null))}
+              className="md:w-36 bg-gray-600 hover:bg-gray-800 text-white hover:text-white duration-300 font-medium text-xl rounded-md p-1"
+            >
               Author
             </button>
           )}
@@ -350,20 +386,24 @@ const Post = ({ setIsHovered, isHovered, item }) => {
         >
           <Box sx={style} className="flex flex-wrap gap-6">
             <>
-              {followAndUnFollow ? (
-                <button
-                  onClick={() => cardHeaderHandler("Unfollow", id)}
-                  className="bg-gray-600 w-36 hover:bg-gray-800 duration-300 font-medium text-xl rounded-md p-2"
-                >
-                  Unfollow
-                </button>
+              {user?._id !== _id ? (
+                followAndUnFollow ? (
+                  <button
+                    onClick={() => cardHeaderHandler("Unfollow", id)}
+                    className="bg-gray-600 w-36 hover:bg-gray-800 duration-300 font-medium text-xl rounded-md p-2"
+                  >
+                    Unfollow
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => cardHeaderHandler("Follow", id)}
+                    className="bg-blue-600 w-36 hover:bg-gray-800 duration-300 font-medium text-xl rounded-md p-2"
+                  >
+                    Follow
+                  </button>
+                )
               ) : (
-                <button
-                  onClick={() => cardHeaderHandler("Follow", id)}
-                  className="bg-blue-600 w-36 hover:bg-gray-800 duration-300 font-medium text-xl rounded-md p-2"
-                >
-                  Follow
-                </button>
+                ""
               )}
             </>
             {["Message", "Delete", "Report"].map((button, index) => {
@@ -391,43 +431,50 @@ const Post = ({ setIsHovered, isHovered, item }) => {
           </Box>
         </Modal>
       </div>
-      <img
-        className="w-full object-cover md:rounded-sm"
-        src={image}
-        alt="network error"
-      />
+      <Carousel showDots={true} responsive={responsive}>
+        {Array(5).fill(5).map((p, i) => {
+          return (
+            <img
+              key={i}
+              className="w-full object-cover md:rounded-sm"
+              src={image}
+              alt="network error"
+            />
+          );
+        })}
+      </Carousel>
       <div className=" text-black dark:text-white flex justify-between my-3 mx-2 md:mx-0">
         <div className=" flex flex-1 gap-5">
           {like ? (
             <FaHeart
               onClick={likeDislikeHandler}
-              className="cursor-pointer text-[35px] text-red-800"
+              className="cursor-pointer text-[30px] text-red-800"
             />
           ) : (
             <FaRegHeart
               onClick={likeDislikeHandler}
-              className="cursor-pointer text-[35px] hover:text-gray-400 duration-100"
+              className="cursor-pointer text-[30px] hover:text-gray-400 duration-100"
             />
           )}
           <FaRegCommentDots
             onClick={handleCommentOpen}
-            className="cursor-pointer text-[35px] hover:text-gray-400 duration-100"
+            className="cursor-pointer text-[30px] hover:text-gray-400 duration-100"
           />
-          <TbLocationShare
+          <FaRegShareSquare
             onClick={handleShareOpen}
-            className="cursor-pointer text-[35px] hover:text-gray-400 duration-100"
+            className="cursor-pointer text-[30px] hover:text-gray-400 duration-100"
           />
         </div>
 
-        {saved === "saved" ? (
+        {saved === "saved" && isBookmarked ? (
           <IoMdBookmark
             onClick={() => addAndRemoveBookmarkPost(id)}
-            className="cursor-pointer text-[35px] hover:text-gray-400 duration-100"
+            className="cursor-pointer text-[30px] hover:text-gray-400 duration-100"
           />
         ) : (
           <FaRegBookmark
             onClick={() => addAndRemoveBookmarkPost(id)}
-            className="cursor-pointer text-[35px] hover:text-gray-400 duration-100"
+            className="cursor-pointer text-[30px] hover:text-gray-400 duration-100"
           />
         )}
       </div>
@@ -447,8 +494,6 @@ const Post = ({ setIsHovered, isHovered, item }) => {
         view all {comments?.length} comments
       </span>
       <CommentModal
-        like={like}
-        likeDislikeHandler={likeDislikeHandler}
         item={item}
         open={commentModal}
         handleClose={handleCommentClose}

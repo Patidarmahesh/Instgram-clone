@@ -59,7 +59,7 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen w-full md:gap-2">
+    <div className="flex justify-center bg-white items-center h-screen w-full md:gap-2">
       <div className="w-[26%] hidden md:block relative">
         <img src="src/assets/home-phones-2x.png" className="w-full h-30" />
         <img

@@ -6,7 +6,6 @@ import { useSelector } from "react-redux";
 const Rightsidebar = () => {
   const [suggestedUser, setSuggestedUser] = React.useState([]);
   const {user} = useSelector((state)=>state.auth)
-  console.log(user)
 
   const getAllPost = async () => {
     const allPost = await GetRequest("/api/v1/user/suggested", {

@@ -1,116 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import Modal from "@mui/material/Modal";
-import {
-  deleteRequestById,
-  GetRequest,
-  postRequest,
-  updateRequestById,
-} from "@/apiHandler/apiHandler";
-import { toast } from "react-toastify";
-import { setPost } from "@/redux/postSlice";
-import { useDispatch, useSelector } from "react-redux";
 import CommentCommanData from "./CommentCommanData";
 
-const CommentModal = ({
-  item,
-  open,
-  handleClose,
-  likeDislikeHandler,
-  like,
-  handleShareOpen,
-}) => {
-  const { userName, profilePicture, _id } = item?.author;
-  const { image, likes, comments, caption, createdAt, _id: id } = item;
-  const { user } = useSelector((state) => state.auth);
-  const [text, setText] = useState("");
-  const [toogleButton, setToogleButton] = useState(false);
-  const inputRef = useRef();
-  const dispatch = useDispatch();
-
-  const changeTextHandler = (event) => {
-    const inputText = event.target.value;
-    if (inputText.trim()) {
-      setText(inputText);
-    } else {
-      setText("");
-    }
-  };
-
-  const addComment = async () => {
-    const response = await postRequest(
-      `/api/v1/post/${id}/addcomment`,
-      { text: text },
-      {
-        Headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      }
-    );
-    const { success, message } = response?.data;
-    if (success) {
-      toast.success(message);
-      setText("");
-      const allPost = await GetRequest("/api/v1/post/getallpost", {
-        withCredentials: true,
-      });
-      const { success: successData, posts } = allPost?.data;
-      if (successData) {
-        dispatch(setPost(posts));
-      }
-    }
-  };
-
-  const deleteComment = async (id) => {
-    const response = await deleteRequestById(
-      `/api/v1/post/${id}/deletecomment`
-    );
-    const { success, message } = response?.data;
-    if (success) {
-      toast.success(message);
-      const allPost = await GetRequest("/api/v1/post/getallpost", {
-        withCredentials: true,
-      });
-      const { success: successData, posts } = allPost?.data;
-      if (successData) {
-        dispatch(setPost(posts));
-      }
-    }
-  };
-
-  const updateComment = async (id) => {
-    const response = await updateRequestById(
-      `/api/v1/post/${id}/updatecomment`,
-      { text: inputRef?.current?.innerText },
-      {
-        Headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      }
-    );
-    const { success, message } = response?.data;
-    if (success) {
-      toast.success(message);
-      const allPost = await GetRequest("/api/v1/post/getallpost", {
-        withCredentials: true,
-      });
-      const { success: successData, posts } = allPost?.data;
-      if (successData) {
-        dispatch(setPost(posts));
-        onClickFocus();
-      }
-    }
-  };
-
-  const onClickFocus = () => {
-    setToogleButton(!toogleButton);
-  };
-
-  useEffect(() => {
-    inputRef?.current?.focus();
-  }, [toogleButton]);
-
+const CommentModal = ({ item, open, handleClose, handleShareOpen }) => {
   return (
     <Modal
       open={open}
@@ -123,9 +15,8 @@ const CommentModal = ({
         <div className="flex h-[680px] shadow-2xl shadow-green-700">
           <div className="w-[40%]">
             <img
-              className="w-full object-cover h-full rounded-l-md"
-              src={image}
-              // src="https://static-eu-cdn.eporner.com/gallery/bf/W9/6n1SyREW9bf/14778251-ava-addams-rent-a-pornstar-the-lonely-bachelor-007-bdfc2919f798204d2c2002010d1a9e05_880x660.jpg"
+              className="w-full object-fill h-full rounded-l-md"
+              src={item?.image}
             />
           </div>
           {/* <div className="w-[60%] bg-black rounded-r-md flex flex-col justify-between">
@@ -290,25 +181,8 @@ const CommentModal = ({
             </div>
           </div> */}
           <CommentCommanData
-            likeDislikeHandler={likeDislikeHandler}
-            like={like}
+            item={item}
             handleShareOpen={handleShareOpen}
-            userName={userName}
-            likes={likes}
-            comments={comments}
-            caption={caption}
-            createdAt={createdAt}
-            profilePicture={profilePicture}
-            _id={_id}
-            text={text}
-            user={user}
-            changeTextHandler={changeTextHandler}
-            updateComment={updateComment}
-            inputRef={inputRef}
-            addComment={addComment}
-            deleteComment={deleteComment}
-            toogleButton={toogleButton}
-            onClickFocus={onClickFocus}
           />
         </div>
       </div>
